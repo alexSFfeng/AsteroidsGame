@@ -16,60 +16,73 @@ public class AsteroidsGame extends PApplet {
 
 SpaceShip soga = new SpaceShip();
 Star [] field;
-Asteroid [] space;
+ArrayList <Asteroid> space;
+boolean keyA [] = new boolean [5];
 public void setup() 
 {
-  size(600,1000);
-  field = new Star[200];
-  space = new Asteroid[8];
+  size(1000,1000);
+  field = new Star[230];
+  space = new ArrayList <Asteroid>();
   for (int i =0; i < field.length; i++)
   {
     field[i] = new Star();
   }
-  for (int i =0; i < space.length; i++)
+  for (int i =0; i < 8; i++)
   {
-    space[i] = new Asteroid();
+    space.add(new Asteroid());
   }
 }
 public void draw() 
 {
  fill(0,0,0,120);
- rect(0,0,600,1000);  
+ rect(0,0,1000,1000);  
  for(int i = 0; i< field.length; i++)
  {
   field[i].show();
 
  } 
-  for(int i = 0; i< space.length; i++)
+  for(int i = 0; i < space.size(); i++)
  {
-  space[i].show();
-  space[i].move();
+  space.get(i).show();
+  space.get(i).move();
+  double collision = dist(soga.getX(),soga.getY(),space.get(i).getX(),space.get(i).getY());
+  if (collision < 35)
+  {
+    space.remove(i);
+    space.add(new Asteroid());
+  }
  } 
  soga.show();
  soga.move();
+ oMove();
 
 }
 public void keyPressed()
 {
   if(key == 'a')
   {
+    keyA[0] = true;
     soga.rotate(-7);
   }
   if(key == 'd')
   {
+    keyA[1] = true;
     soga.rotate(7);
   }
   if(key == 'w')
   {
+    keyA[2] = true;
     soga.accelerate(.15f);
   }
   if(key == 's')
   {
+    keyA[3] = true;
     soga.accelerate(-.15f);
   }
   if(key == ' ')
   {
-    soga.setX((int)(Math.random()*300)+150);
+    keyA[4] = true;
+    soga.setX((int)(Math.random()*500)+250);
     soga.setY((int)(Math.random()*500)+250);
     soga.setDirectionX(0);
     soga.setDirectionY(0);
@@ -77,19 +90,97 @@ public void keyPressed()
      {
       field[i].setS();
      }
-     for(int i = 0; i < space.length; i++)
+     for(int i = 0; i < space.size(); i++)
      {
-      space[i].setX((int)(Math.random()*600) + 1);
-      space[i].setY((int)(Math.random()*1000) +1);
+      space.get(i).setX((int)(Math.random()*1000) + 1);
+      space.get(i).setY((int)(Math.random()*1000) +1);
+      space.get(i).setDirectionY(((int)(Math.random()*2)+1));
+      space.get(i).setDirectionX(((int)(Math.random()*2)+1));
+      if(Math.random()<0.5f)
+      {
+        space.get(i).setDirectionY(((int)(Math.random()*2)+1) * -1);
+      }
+      if(Math.random()<0.5f)
+      {
+        space.get(i).setDirectionX(((int)(Math.random()*2)+1) * -1);
+      }
      }
   }
-}
+ }
+ public void keyReleased()
+ {
+    if(key == 'a')
+  {
+    keyA[0] = false;
+  }
+  if(key == 'd')
+  {
+    keyA[1] = false;
+  }
+  if(key == 'w')
+  {
+    keyA[2] = false;
+  }
+  if(key == 's')
+  {
+    keyA[3] = false;
+  }
+  if(key == ' ')
+  {
+    keyA[4] = false;
+  }
+ }
+ public void oMove()
+ {
+  if(keyA[0] == true)
+  {
+    soga.rotate(-7);
+  }
+  if(keyA[1] == true)
+  {
+    soga.rotate(7);
+  }
+  if(keyA[2] == true)
+  {
+    soga.accelerate(.15f);
+  }
+  if(keyA[3] == true)
+  {
+    soga.accelerate(-.15f);
+  }
+  if(keyA[4] == true)
+  {
+     soga.setX((int)(Math.random()*500)+250);
+     soga.setY((int)(Math.random()*500)+250);
+     soga.setDirectionX(0);
+     soga.setDirectionY(0);
+     for(int i = 0; i< field.length; i++)
+     {
+      field[i].setS();
+     }
+     for(int i = 0; i < space.size(); i++)
+     {
+      space.get(i).setX((int)(Math.random()*1000) + 1);
+      space.get(i).setY((int)(Math.random()*1000) +1);
+      space.get(i).setDirectionY(((int)(Math.random()*2)+1));
+      space.get(i).setDirectionX(((int)(Math.random()*2)+1));
+      if(Math.random()<0.5f)
+      {
+        space.get(i).setDirectionY(((int)(Math.random()*2)+1) * -1);
+      }
+      if(Math.random()<0.5f)
+      {
+        space.get(i).setDirectionX(((int)(Math.random()*2)+1) * -1);
+      }
+     }
+  }
+ }
 class Star
 {
   private int starX,starY,starSize;
   public Star()
   {
-   starX = (int)(Math.random()*600);
+   starX = (int)(Math.random()*1000);
    starY = (int)(Math.random()*1000);
    starSize = (int)(Math.random()*5) + 2;
   }
@@ -100,7 +191,7 @@ class Star
   }
   public void setS()
   {
-   starX = (int)(Math.random()*600);
+   starX = (int)(Math.random()*1000);
    starY = (int)(Math.random()*1000);
    starSize = (int)(Math.random()*5) + 2;
   }
@@ -109,7 +200,7 @@ class SpaceShip extends Floater
 {   
     public SpaceShip()
     {
-      myCenterX = 300;
+      myCenterX = 500;
       myCenterY = 500;
       myDirectionX = 0;
       myDirectionY = 0;
@@ -118,13 +209,13 @@ class SpaceShip extends Floater
       myPointDirection = 0;
       xCorners  =  new int [corners];
       yCorners  =  new int [corners];
-      xCorners[0] = 30;    yCorners[0] = 0;
+      xCorners[0] = 20;    yCorners[0] = 0;
       xCorners[1] = 8;     yCorners[1] = -12;
-      xCorners[2] = -18;   yCorners[2] = -18;
+      xCorners[2] = -10;   yCorners[2] = -18;
       xCorners[3] = 0;     yCorners[3] = 0;
-      xCorners[4] = -18;   yCorners[4] = 18;
+      xCorners[4] = -10;   yCorners[4] = 18;
       xCorners[5] = 8;     yCorners[5] = 12;
-      xCorners[6] = 30;    yCorners[6] = 0;
+      xCorners[6] = 20;    yCorners[6] = 0;
     }
       public void setX(int x){myCenterX = x;}
       public int getX(){return (int)myCenterX;}
@@ -145,7 +236,7 @@ class Asteroid extends Floater
     xCorners = new int [corners];
     yCorners = new int [corners];
     myColor = color(128,115,115,150);
-    myCenterX = Math.random()*600 + 1;
+    myCenterX = Math.random()*1000 + 1;
     myCenterY = Math.random()*1000 +1;
     myPointDirection = Math.random()*360;
     xCorners[0] = 22; yCorners[0] = 0;
@@ -156,7 +247,15 @@ class Asteroid extends Floater
     xCorners[5] = 9; yCorners[5] = -10;
     xCorners[6] = 18; yCorners[6] = -5;
     xCorners[7] = 22; yCorners[7] = 0; 
-    myDirectionY = (int)(Math.random()*4)-2; myDirectionX = (int)(Math.random()*4)-2;
+    myDirectionY = ((int)(Math.random()*2)+1); myDirectionX = ((int)(Math.random()*2)+1);
+    if(Math.random()<0.5f)
+    {
+      myDirectionX = -myDirectionX;
+    }     
+    if(Math.random()<0.5f)
+    {
+      myDirectionY = -myDirectionY;
+    }
    }
    public void setX(int x){myCenterX=x;}
    public int getX(){return (int)myCenterX;}
@@ -170,7 +269,7 @@ class Asteroid extends Floater
    public double getPointDirection(){return myPointDirection;}
    public void move()
    {
-        //change the x and y coordinates by myDirectionX and myDirectionY       
+        //change the x and y coordinates by myDirectionX and myDirectionY  
     myCenterX += myDirectionX;    
     myCenterY += myDirectionY;     
     myPointDirection = myPointDirection + 1;
